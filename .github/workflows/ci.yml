@@ -1,0 +1,42 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run Linting
+      run: |
+        ruff check .
+        
+    - name: Run Tests
+      env:
+        GROQ_API_KEY: dummy_key
+        HF_TOKEN: dummy_token
+        SLACK_BOT_TOKEN: xoxb-dummy
+        SLACK_CHANNEL_ID: C0000000
+        OPENAI_API_KEY: dummy_key
+      run: |
+        pytest -v --tb=short

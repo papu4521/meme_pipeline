@@ -1,0 +1,11 @@
+*.exe
+ngrok*
+.env
+.venv/
+__pycache__/
+*.db
+*.sqlite3
+
+generated_images/
+*.zip
+*.zip
